@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useMetaMask } from "metamask-react";
 import { useDispatch } from "react-redux";
 import { Logintrue, walletModalShow } from "../../redux/counterSlice";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { ethers } from "ethers";
+import axios from "axios";
+
 const Metamask_comp_text = () => {
   const { status, connect, account, ethereum } = useMetaMask();
 
@@ -52,37 +55,59 @@ const Metamask_comp_text = () => {
 };
 
 const Metamask_comp_login = () => {
-  const { status, connect, account, chainId, ethereum } = useMetaMask();
-  const axios = require("axios");
+  const [haveMetamask, setHaveMetamask] = useState(true);
+  const [accountAddress, setAccountAddress] = useState("");
+  const [accountBalance, setAccountBalance] = useState("");
+  const [isConnected, setIsConnected] = useState(false);
 
-  if (status === "initializing") {
-    return (
-      <button className="js-wallet bg-accent hover:bg-accent-dark mb-4 flex w-full items-center justify-center rounded-full border-2 border-transparent py-4 px-8 text-center font-semibold text-white transition-all">
-        <Image
-          src="/images/wallets/metamask_24.svg"
-          className="mr-2.5 inline-block h-6 w-6"
-          alt=""
-          height={24}
-          width={24}
-        />
-        <span className="ml-2.5">Metamask initializing</span>
-      </button>
-    );
-  }
-  if (status === "unavailable") {
-    return (
-      <button className="js-wallet bg-accent hover:bg-accent-dark mb-4 flex w-full items-center justify-center rounded-full border-2 border-transparent py-4 px-8 text-center font-semibold text-white transition-all">
-        <Image
-          src="/images/wallets/metamask_24.svg"
-          className="mr-2.5 inline-block h-6 w-6"
-          alt=""
-          height={24}
-          width={24}
-        />
-        <span className="ml-2.5">unavailable</span>
-      </button>
-    );
-  }
+  useEffect(() => {
+    const { ethereum } = window;
+    const checkMetamaskAvailability = async () => {
+      if (!ethereum) {
+        setHaveMetamask(false);
+      }
+      setHaveMetamask(true);
+    };
+    checkMetamaskAvailability();
+  }, []);
+  console.log(
+    "statuses",
+    { haveMetamask },
+    { accountBalance },
+    { accountAddress },
+    { isConnected }
+  );
+  // const { status, connect, account, chainId, ethereum } = useMetaMask();
+  // console.log({ status, connect, account, chainId, ethereum });
+
+  // if (status === "initializing") {
+  //   return (
+  //     <button className="js-wallet bg-accent hover:bg-accent-dark mb-4 flex w-full items-center justify-center rounded-full border-2 border-transparent py-4 px-8 text-center font-semibold text-white transition-all">
+  //       <Image
+  //         src="/images/wallets/metamask_24.svg"
+  //         className="mr-2.5 inline-block h-6 w-6"
+  //         alt=""
+  //         height={24}
+  //         width={24}
+  //       />
+  //       <span className="ml-2.5">Metamask initializing</span>
+  //     </button>
+  //   );
+  // }
+  // if (status === "unavailable") {
+  //   return (
+  //     <button className="js-wallet bg-accent hover:bg-accent-dark mb-4 flex w-full items-center justify-center rounded-full border-2 border-transparent py-4 px-8 text-center font-semibold text-white transition-all">
+  //       <Image
+  //         src="/images/wallets/metamask_24.svg"
+  //         className="mr-2.5 inline-block h-6 w-6"
+  //         alt=""
+  //         height={24}
+  //         width={24}
+  //       />
+  //       <span className="ml-2.5">unavailable</span>
+  //     </button>
+  //   );
+  // }
   // if (status === "notConnected")
   //   return (
   //     <>
@@ -116,68 +141,118 @@ const Metamask_comp_login = () => {
   //     </button>
   //   );
 
-  if (status === "notConnected");
-  var Eth = require("web3-eth");
-  const web3 = require("web3");
+  // if (status === "notConnected");
+  // var Eth = require("web3-eth");
+  // const web3 = require("web3");
 
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    connect()
-      .then(() => {
-        console.log(account);
-      })
-      .catch((error) => {
-        console.log(error);
+  const handleSubmit = async () => {
+    const { ethereum } = window;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    try {
+      if (!ethereum) {
+        setHaveMetamask(false);
+      }
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts"
       });
+      let balance = await provider.getBalance(accounts[0]);
+      let bal = ethers.utils.formatEther(balance);
 
-    console.log("Account Address = " + account);
+      setAccountAddress(accounts[0]);
+      setAccountBalance(bal);
+      setIsConnected(true);
 
-    // var eth = new Eth(Eth.givenProvider);
-    // console.log(eth); // Null
-
-    // const balance = await eth.getBalance(account);
-    // console.log(balance);
-
-    // console.log(account);
-    // const req = await axios
-    //   .post("http://localhost:5500/user/login", {
-    //     address: account,
-    //     balance: balance,
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     return;
-    //   });
-    // localStorage.setItem("Useraddress", account);
-    // localStorage.setItem("UserBalance", balance);
-    // dispatch(Logintrue());
-    // console.log(req);
-    // router.push("/");
+      console.log("axios call");
+      const req = await axios
+        .post("http://localhost:5500/user/login", {
+          address: accounts[0],
+          balance: bal
+        })
+        .then((res) => {
+          console.log("logged in call", res);
+          localStorage.setItem("Useraddress", accounts[0]);
+          localStorage.setItem("UserBalance", bal);
+          dispatch(Logintrue());
+          console.log(req);
+          router.push("/");
+        })
+        .catch((err) => {
+          console.log(err);
+          return;
+        });
+    } catch (error) {
+      setIsConnected(false);
+    }
   };
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   connect()
+  //     .then(() => {
+  //       console.log(account);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+
+  //   console.log("Account Address = " + account);
+
+  //   // var eth = new Eth(Eth.givenProvider);
+  //   // console.log(eth); // Null
+
+  //   // const balance = await eth.getBalance(account);
+  //   // console.log(balance);
+
+  //   // console.log(account);
+  //   // const req = await axios
+  //   //   .post("http://localhost:5500/user/login", {
+  //   //     address: account,
+  //   //     balance: balance,
+  //   //   })
+  //   //   .catch((err) => {
+  //   //     console.log(err);
+  //   //     return;
+  //   //   });
+  //   // localStorage.setItem("Useraddress", account);
+  //   // localStorage.setItem("UserBalance", balance);
+  //   // dispatch(Logintrue());
+  //   // console.log(req);
+  //   // router.push("/");
+  // };
 
   return (
     <>
-      <button
-        className="js-wallet bg-accent hover:bg-accent-dark mb-4 flex w-full items-center justify-center rounded-full border-2 border-transparent py-4 px-8 text-center font-semibold text-white transition-all"
-        onClick={handleSubmit}
-      >
-        <Image
-          src="/images/wallets/metamask_24.svg"
-          className=" inline-block h-6 w-6"
-          alt=""
-          height={24}
-          width={24}
-        />
-        <span className="ml-2.5">Sign in with Metamask</span>
-      </button>
-      {/* <div>
-          <div>
-            Connected account {account} on chain ID {chainId}
-          </div>
-        </div> */}
+      {haveMetamask ? (
+        <div>
+          {isConnected ? (
+            <div>
+              <p>{accountAddress.slice(0, 4)}...</p>
+              <p>{accountAddress.slice(38, 42)}...</p>
+              <p>Balance</p>
+              <p>{accountBalance}</p>
+            </div>
+          ) : (
+            <button
+              className="js-wallet bg-accent hover:bg-accent-dark mb-4 flex w-full items-center justify-center rounded-full border-2 border-transparent py-4 px-8 text-center font-semibold text-white transition-all"
+              onClick={handleSubmit}
+            >
+              <Image
+                src="/images/wallets/metamask_24.svg"
+                className=" inline-block h-6 w-6"
+                alt=""
+                height={24}
+                width={24}
+              />
+              <span className="ml-2.5">Sign in with Metamask</span>
+            </button>
+          )}
+        </div>
+      ) : (
+        <p>Install Meta Mask</p>
+      )}
     </>
   );
 };
@@ -390,5 +465,5 @@ export {
   Metamask_comp_text,
   Metamask_comp_icon,
   Metamask_comp_login,
-  Confirm_checkout,
+  Confirm_checkout
 };

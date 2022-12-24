@@ -1,9 +1,18 @@
 import React from "react";
 import Link from "next/link";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Logintrue } from "../../redux/counterSlice";
 
 const hero = () => {
+  const dispatch = useDispatch();
   const { loggedin } = useSelector((state) => state.counter);
+  if (typeof window !== "undefined") {
+    console.log("call");
+    if (localStorage.getItem("Useraddress")) {
+      console.log("callagain");
+      dispatch(Logintrue());
+    }
+  }
   return (
     <section className="relative pb-10 pt-20 md:pt-32 h-1527">
       <picture className="pointer-events-none absolute inset-x-0 top-0 -z-10 block dark:hidden h-full">

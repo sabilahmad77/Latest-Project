@@ -9,23 +9,22 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
-  },
+  }
 });
 
 const upload = multer({ storage: storage });
 
 router.post("/createNft", upload.single("nftImage"), (req, res) => {
-  const saveImage =  NFTs({
+  const saveImage = NFTs({
     id: req.body.id,
     name: req.body.name,
     price: req.body.price,
     img: {
       data: fs.readFileSync("uploads/" + req.file.filename),
-      contentType: "image/png",
+      contentType: "image/png"
     },
     isBuy: req.body.isBuy,
-    owner: req.body.owner,
-
+    owner: req.body.owner
   });
   saveImage
     .save()
@@ -35,22 +34,23 @@ router.post("/createNft", upload.single("nftImage"), (req, res) => {
     .catch((err) => {
       console.log(err, "error has occur");
     });
-    res.send('image is saved')
+  res.send("image is saved");
 });
 
 //update item
-router.put('/createNft/:id', async (req, res)=>{
-  try{
+router.put("/createNft/:id", async (req, res) => {
+  try {
     //find the item by its id and update it
     // NFTs.findByIdAndUpdate()
-    const updateItem = await NFTs.findByIdAndUpdate(req.params.id, {isBuy: req.body.isBuy,owner: req.body.owner});
+    const updateItem = await NFTs.findByIdAndUpdate(req.params.id, {
+      isBuy: req.body.isBuy,
+      owner: req.body.owner
+    });
     res.status(200).json(updateItem);
-  }catch(err){
+  } catch (err) {
     res.json(err);
   }
-})
-
-
+});
 
 router.post("/getNft", async (req, res, next) => {
   try {
@@ -62,7 +62,5 @@ router.post("/getNft", async (req, res, next) => {
     return res.status(500).json({ msg: err.message });
   }
 });
-
-
 
 module.exports = router;

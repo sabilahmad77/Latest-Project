@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import Link from "next/link";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -11,18 +12,18 @@ const Login = () => {
     {
       id: 1,
       text: "Ethereum",
-      icon: "ETH",
+      icon: "ETH"
     },
     {
       id: 2,
       text: "Torus",
-      icon: "torus",
+      icon: "torus"
     },
     {
       id: 4,
       text: "Mobile Wallet",
-      icon: "mbl-wallet",
-    },
+      icon: "mbl-wallet"
+    }
   ];
 
   return (

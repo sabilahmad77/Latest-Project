@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { buyModalShow, setCategoryItem } from "../../redux/counterSlice";
 import axios from "axios";
 
-
 const CategoryItem = () => {
   const { sortedtrendingCategoryItemData } = useSelector(
     (state) => state.counter
@@ -19,22 +18,19 @@ const CategoryItem = () => {
   const dispatch = useDispatch();
 
   const loadMarketplaceItems = async () => {
-  
     await axios
-      .post("http://localhost:5500/nft/getNft",{isBuy:false})
+      .post("http://localhost:5500/nft/getNft", { isBuy: false })
       .then((res) => setData(res.data))
       .catch((err) => console.log(err, "it has an error"));
 
     //{console.log(res.data)}
     //setItems(items)
     //setLoading(false)
-  }
+  };
   useEffect(() => {
-    loadMarketplaceItems()
-
-  },[])
-  
-
+    loadMarketplaceItems();
+  }, []);
+  console.log("data", { data });
   return (
     <div className="grid grid-cols-1 gap-[1.875rem] md:grid-cols-2 lg:grid-cols-4">
       {data.map((item) => {
@@ -52,9 +48,8 @@ const CategoryItem = () => {
           // bidCount,
           // likes,
           // creator,
-          
         } = item;
-        console.log(item);
+        console.log("db items", { item });
         // const itemLink = image
         //   .split("/")
         //   .slice(-1)
@@ -66,14 +61,14 @@ const CategoryItem = () => {
             <div className="dark:bg-jacarta-700 dark:border-jacarta-700 border-jacarta-100 rounded-2.5xl block border bg-white p-[1.1875rem] transition-shadow hover:shadow-lg">
               <figure className="relative">
                 {/* <Link href={`/item/${itemLink}`}> */}
-                  <a>
-                    <img
-                      // src={image}
-                      src={`data:image/png;base64,${base64String}`}
-                      alt="item 5"
-                      className="w-full h-[230px] rounded-[0.625rem] object-cover"
-                    />
-                  </a>
+                <a>
+                  <img
+                    // src={image}
+                    src={`data:image/png;base64,${base64String}`}
+                    alt="item 5"
+                    className="w-full h-[230px] rounded-[0.625rem] object-cover"
+                  />
+                </a>
                 {/* </Link> */}
 
                 {/* <Likes like={likes} /> */}
@@ -81,40 +76,39 @@ const CategoryItem = () => {
                 <div className="absolute left-3 -bottom-3">
                   <div className="flex -space-x-2">
                     {/* <Link href={`/item/${itemLink}`}> */}
-                      <a>
-                        {/* <Tippy content={<span>creator: {creator.name}</span>}> */}
-                        <Tippy content={<span>creator: {"xyz"}</span>}>
-
-                          <img
-                            // src={creator.image}
-                            alt="creator"
-                            className="dark:border-jacarta-600 hover:border-accent dark:hover:border-accent h-6 w-6 rounded-full border-2 border-white"
-                          />
-                        </Tippy>
-                      </a>
+                    <a>
+                      {/* <Tippy content={<span>creator: {creator.name}</span>}> */}
+                      <Tippy content={<span>creator: {"xyz"}</span>}>
+                        <img
+                          // src={creator.image}
+                          alt="creator"
+                          className="dark:border-jacarta-600 hover:border-accent dark:hover:border-accent h-6 w-6 rounded-full border-2 border-white"
+                        />
+                      </Tippy>
+                    </a>
                     {/* </Link> */}
                     {/* <Link href={`/item/${itemLink}`}> */}
-                      <a>
-                        <Tippy content={<span>creator: {owner.name}</span>}>
-                          <img
-                            src={owner.image}
-                            alt="owner"
-                            layout="fill"
-                            className="dark:border-jacarta-600 hover:border-accent dark:hover:border-accent h-6 w-6 rounded-full border-2 border-white"
-                          />
-                        </Tippy>
-                      </a>
+                    <a>
+                      <Tippy content={<span>creator: {owner.name}</span>}>
+                        <img
+                          src={owner.image}
+                          alt="owner"
+                          layout="fill"
+                          className="dark:border-jacarta-600 hover:border-accent dark:hover:border-accent h-6 w-6 rounded-full border-2 border-white"
+                        />
+                      </Tippy>
+                    </a>
                     {/* </Link> */}
                   </div>
                 </div>
               </figure>
               <div className="mt-7 flex items-center justify-between">
                 {/* <Link href={`/item/${itemLink}`}> */}
-                  <a>
-                    <span className="font-display text-jacarta-700 hover:text-accent text-base dark:text-white">
-                      {name}
-                    </span>
-                  </a>
+                <a>
+                  <span className="font-display text-jacarta-700 hover:text-accent text-base dark:text-white">
+                    {name}
+                  </span>
+                </a>
                 {/* </Link> */}
 
                 {/* auction dropdown  */}
@@ -133,22 +127,21 @@ const CategoryItem = () => {
                 <button
                   className="text-accent font-display text-sm font-semibold"
                   onClick={() => {
-                    dispatch(buyModalShow())
-                    dispatch(setCategoryItem(item))
-                  
+                    dispatch(buyModalShow());
+                    dispatch(setCategoryItem(item));
                   }}
-                  >
+                >
                   Buy now
                 </button>
                 {/* <Link href={`/item/${itemLink}`}> */}
-                  <a className="group flex items-center">
-                    <svg className="icon icon-history group-hover:fill-accent dark:fill-jacarta-200 fill-jacarta-500 mr-1 mb-[3px] h-4 w-4">
-                      <use xlinkHref="/icons.svg#icon-history"></use>
-                    </svg>
-                    <span className="group-hover:text-accent font-display dark:text-jacarta-200 text-sm font-semibold">
-                      View History
-                    </span>
-                  </a>
+                <a className="group flex items-center">
+                  <svg className="icon icon-history group-hover:fill-accent dark:fill-jacarta-200 fill-jacarta-500 mr-1 mb-[3px] h-4 w-4">
+                    <use xlinkHref="/icons.svg#icon-history"></use>
+                  </svg>
+                  <span className="group-hover:text-accent font-display dark:text-jacarta-200 text-sm font-semibold">
+                    View History
+                  </span>
+                </a>
                 {/* </Link> */}
               </div>
             </div>

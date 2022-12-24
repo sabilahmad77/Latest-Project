@@ -4,7 +4,7 @@ import "tippy.js/dist/tippy.css"; // optional
 import Collection_dropdown2 from "../../components/dropdown/collection_dropdown2";
 import {
   collectionDropdown2_data,
-  EthereumDropdown2_data,
+  EthereumDropdown2_data
 } from "../../data/dropdown";
 import { FileUploader } from "react-drag-drop-files";
 import Proparties_modal from "../../components/modal/proparties_modal";
@@ -30,7 +30,7 @@ const Create = () => {
     "WAV",
     "OGG",
     "GLB",
-    "GLTF",
+    "GLTF"
   ];
   const { loggedin } = useSelector((state) => state.counter);
   const [file, setFile] = useState("");
@@ -47,7 +47,7 @@ const Create = () => {
     Supply: "",
     Blockchain: "Ethereum",
     FreezeMetadata: "",
-    price: "",
+    price: ""
   });
 
   const mintNFT = async () => {
@@ -67,7 +67,7 @@ const Create = () => {
 
     const { marketplace, nft, address, status } = await loadContracts();
 
-    console.log(status);
+    console.log({ status });
 
     const metadata = {};
     metadata.name = input.name;
@@ -79,9 +79,9 @@ const Create = () => {
       console.log("Something went wrong while uploading your tokenURI.");
     }
     const tokenURI = pinataResponse.pinataUrl;
-    console.log(input.image.name);
-    console.log(tokenURI);
-    console.log(input.price);
+    console.log("image name", input.image.name);
+    console.log("token url", tokenURI);
+    console.log("price", input.price);
 
     await nft.mint(tokenURI);
     // var nftId;
@@ -92,7 +92,9 @@ const Create = () => {
     const listingPrice = ethers.utils.parseEther(input.price.toString());
     await marketplace.makeItem(nft.address, id, listingPrice);
     // nftId = await marketplace.itemCount();
+    console.log("marketplace", id, listingPrice);
     if (id) {
+      console.log("create call with id");
       const formData = new FormData();
       formData.append("id", id);
       formData.append("name", input.name);
@@ -103,7 +105,8 @@ const Create = () => {
 
       await axios
         .post("http://localhost:5500/nft/createNft", formData, {})
-        .then((response) => console.log(response));
+        .then((response) => console.log("response", response))
+        .catch((err) => console.log("error", err));
     }
   };
 
@@ -156,7 +159,7 @@ const Create = () => {
   const Get_collection_Value = (Collectionvalue) => {
     setinput((prevState) => ({
       ...prevState,
-      Collection: { Collectionvalue },
+      Collection: { Collectionvalue }
     }));
   };
   // Get value from the collection component for the input.Blockchain
@@ -164,7 +167,7 @@ const Create = () => {
     setinput((prevState) => ({
       ...prevState,
       // Blockchain: { Blockchainvalue }, //old
-      Blockchain: 97,
+      Blockchain: 97
     }));
   };
   const dispatch = useDispatch();
@@ -174,13 +177,13 @@ const Create = () => {
     setinput((prevState) => ({
       ...prevState,
       // image: file.name, //old
-      image: file,
+      image: file
     }));
   };
   const handleChange = (e) => {
     setinput((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     }));
   };
 
@@ -189,20 +192,20 @@ const Create = () => {
       id: 1,
       name: "proparties",
       text: "Textual traits that show up as rectangles.",
-      icon: "proparties-icon",
+      icon: "proparties-icon"
     },
     {
       id: 2,
       name: "levels",
       text: "Numerical traits that show as a progress bar.",
-      icon: "level-icon",
+      icon: "level-icon"
     },
     {
       id: 3,
       name: "stats",
       text: "Numerical traits that just show as numbers.",
-      icon: "stats-icon",
-    },
+      icon: "stats-icon"
+    }
   ];
   return (
     <div>
@@ -456,7 +459,7 @@ const Create = () => {
                   onChange={() => {
                     setinput((prevState) => ({
                       ...prevState,
-                      Unlockable_Content: !input.Unlockable_Content,
+                      Unlockable_Content: !input.Unlockable_Content
                     }));
                   }}
                   type="checkbox"
@@ -521,7 +524,7 @@ const Create = () => {
                     setinput((prevState) => ({
                       ...prevState,
                       Explicit_Sensitive_Content:
-                        !input.Explicit_Sensitive_Content,
+                        !input.Explicit_Sensitive_Content
                     }));
                   }}
                   type="checkbox"
@@ -686,7 +689,6 @@ const Create = () => {
               ) : (
                 <span className="flex space-x-3">
                   {" "}
-             
                   <Link href="/login">
                     <a>
                       <button className=" bg-accent-lighter cursor-default rounded-full py-3 px-8 text-center font-semibold text-white transition-all">
